@@ -1,0 +1,95 @@
+package pie.nature;
+
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Paint.Style;
+import android.view.Gravity;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+
+public class TileImage extends RelativeLayout {
+
+	private ImageView ivThumb;
+	private TextView tvName;
+
+	public static final int COLOR_TEXT = Color.WHITE;
+	public static final int COLOR_TEXT_BACK = Color.argb(150, 0, 0, 0);
+	public static final int COLOR_TILE = Color.rgb(50, 120, 30);
+	public static final int COLOR_BORDER1 = Color.argb(150, 250, 220, 0);
+	public static final int COLOR_BORDER2 = Color.argb(150, 255, 255, 255);
+
+	public static float sizeText = 10f;
+	public static float valueWidth = 100f;
+	public static float valueHeight = 100f;
+	public static float valueMargin = 10f;
+
+	public TileImage(Context context) {
+		super(context);
+		ivThumb = new ImageView(context);
+		tvName = new TextView(context);
+		this.setBackgroundColor(COLOR_TILE);
+		tvName.setBackgroundColor(COLOR_TEXT_BACK);
+		tvName.setTextColor(COLOR_TEXT);
+	}
+
+	@Override
+	public void draw(Canvas canvas) {
+		super.draw(canvas);
+		Paint paint = new Paint();
+		paint.setAntiAlias(true);
+		paint.setStyle(Style.STROKE);
+		paint.setStrokeWidth(1);
+		paint.setColor(COLOR_BORDER1);
+		canvas.drawRect(0, 0, valueWidth, valueHeight, paint);
+		paint.setColor(COLOR_BORDER2);
+		canvas.drawRect(2, 2, valueWidth - 2, valueHeight - 2, paint);
+	}
+
+	public static void setupTile(float sizeText, float valueWidth,
+			float valueHeight, float valueMargin) {
+		TileImage.sizeText = sizeText;
+		TileImage.valueWidth = valueWidth;
+		TileImage.valueHeight = valueHeight;
+		TileImage.valueMargin = valueMargin;
+	}
+
+	public void setItemToDisplay(Item item) {
+		setThumb(item.getBmp());
+		setName(item.getName());
+	}
+
+	private void setName(String name) {
+
+		tvName.setText(name);
+		tvName.setTextSize(sizeText);
+		tvName.setGravity(Gravity.CENTER_HORIZONTAL);
+
+		tvName.measure(MeasureSpec.makeMeasureSpec((int) valueWidth,
+				MeasureSpec.AT_MOST), 0);
+		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+				(int) valueWidth, (int) valueHeight);
+		// (left, top, right, bottom)
+		params.setMargins((int) valueMargin,
+				(int) (valueHeight - tvName.getMeasuredHeight() - valueMargin),
+				(int) valueMargin, (int) valueMargin);
+
+		this.addView(tvName, params);
+
+	}
+
+	private void setThumb(Bitmap bmp) {
+
+		ivThumb.setImageBitmap(bmp);
+		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+				(int) valueWidth, (int) valueHeight);
+		params.setMargins((int) valueMargin, (int) valueMargin,
+				(int) valueMargin, (int) valueMargin);
+		this.addView(ivThumb, params);
+
+	}
+
+}

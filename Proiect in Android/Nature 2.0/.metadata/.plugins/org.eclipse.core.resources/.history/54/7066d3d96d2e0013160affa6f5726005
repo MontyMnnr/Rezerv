@@ -1,0 +1,111 @@
+package pie.nature;
+
+import java.util.List;
+
+import android.content.Context;
+import android.graphics.Color;
+import android.view.Display;
+import android.view.Gravity;
+import android.view.WindowManager;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
+
+public class MainLayout extends ScrollView {
+
+	private Context context;
+	private TileImage[][] tiles;
+	private RelativeLayout layout;
+
+	private int numberRows;
+	private int numberColumns;
+	private int numberAll;
+	private int valueWidth;
+	private int valueHeight;
+	private int valueMargin;
+
+	private List<Item> items;
+
+	private static int colorBase = Color.GRAY;
+
+	public MainLayout(Context context) {
+		super(context);
+		this.context = context;
+		create();
+	}
+
+	public void create() {
+		initVars();
+		initLayouts();
+		initViews();
+	}
+
+	private void initVars() {
+		numberColumns = 5;
+		if (numberAll % numberColumns != 0)
+			numberRows = numberAll / numberColumns + 1;
+		else
+			numberRows = numberAll / numberColumns;
+
+		WindowManager wm = (WindowManager) context
+				.getSystemService(Context.WINDOW_SERVICE);
+		Display display = wm.getDefaultDisplay();
+		valueWidth = display.getWidth() / numberColumns;
+		valueHeight = valueWidth;
+		valueMargin = valueWidth / 10;
+	}
+
+	private void initLayouts() {
+
+		layout = new RelativeLayout(context);
+		layout.setBackgroundColor(colorBase);
+		layout.setGravity(Gravity.CENTER_HORIZONTAL);
+		RelativeLayout.LayoutParams rllp = new RelativeLayout.LayoutParams(
+				RelativeLayout.LayoutParams.MATCH_PARENT,
+				RelativeLayout.LayoutParams.WRAP_CONTENT);
+
+		this.setLayoutParams(new LinearLayout.LayoutParams(
+				LinearLayout.LayoutParams.MATCH_PARENT,
+				LinearLayout.LayoutParams.MATCH_PARENT));
+		this.addView(layout, rllp);
+		this.setBackgroundColor(colorBase);
+
+	}
+
+	private void initViews() {
+
+		TileImage.setupTile(valueMargin, valueWidth, valueHeight, valueMargin);
+		tiles = new TileImage[numberColumns][numberRows];
+
+//		int k = 0;
+		for (int i = 0; i < numberRows; i++)
+			for (int j = 0; j < numberColumns; j++) {
+
+				tiles[i][j] = new TileImage(context);
+				tiles[i][j].setId(i * numberColumns + j);
+				RelativeLayout.LayoutParams rllp = new RelativeLayout.LayoutParams(
+						valueWidth, valueHeight);
+				rllp.setMargins(j * valueWidth, i * valueHeight, 0, 0);
+				layout.addView(tiles[i][j], rllp);
+
+//				if (k < filesToDisplay.length & k < maxTasks) {
+//					loadBitmap(k, j, i);
+//					k++;
+//				}
+			}
+	}
+
+	public List<Item> getItems() {
+		return items;
+	}
+
+	public void setItems(List<Item> items) {
+		this.items = items;
+		numberAll = items.size();
+	}
+
+	public TileImage[][] getTiles() {
+		return tiles;
+	}
+
+}

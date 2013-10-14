@@ -1,0 +1,95 @@
+package pie.nature;
+
+import java.util.List;
+
+import android.content.Context;
+import android.graphics.Color;
+import android.view.Display;
+import android.view.Gravity;
+import android.view.WindowManager;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
+
+public class MainLayout extends ScrollView {
+
+	private Context context;
+	private TileImage[][] tiles;
+	private RelativeLayout layout;
+
+	private int numberRows;
+	private int numberColumns;
+	private int numberAll;
+	private float valueWidth;
+	private float valueHeight;
+	private float valueMargin;
+
+	private List<Item> items;
+
+	private static int colorBase = Color.GRAY;
+
+	public MainLayout(Context context) {
+		super(context);
+		this.context = context;
+	}
+
+	public void create(List<Item> items) {
+		this.items = items;
+		numberAll = items.size();
+		initVars();
+		initLayouts();
+		initViews();
+	}
+
+	private void initVars() {
+		numberColumns = 5;
+		numberRows = numberAll / numberColumns;
+		if (numberAll % numberColumns != 0)
+			numberRows++;
+
+		WindowManager wm = (WindowManager) context
+				.getSystemService(Context.WINDOW_SERVICE);
+		Display display = wm.getDefaultDisplay();
+		valueWidth = display.getWidth() / numberColumns;
+		valueHeight = valueWidth;
+		valueMargin = valueWidth / 100 * 5; // 5% of the width
+
+		TileImage.setupTile(valueMargin, valueWidth, valueHeight, valueMargin);
+	}
+
+	private void initLayouts() {
+
+		layout = new RelativeLayout(context);
+		layout.setBackgroundColor(colorBase);
+		layout.setGravity(Gravity.CENTER_HORIZONTAL);
+		RelativeLayout.LayoutParams rllp = new RelativeLayout.LayoutParams(
+				RelativeLayout.LayoutParams.MATCH_PARENT,
+				RelativeLayout.LayoutParams.WRAP_CONTENT);
+
+		this.setLayoutParams(new ScrollView.LayoutParams(
+				ScrollView.LayoutParams.MATCH_PARENT,
+				ScrollView.LayoutParams.MATCH_PARENT));
+		this.addView(layout, rllp);
+		this.setBackgroundColor(colorBase);
+
+	}
+
+	private void initViews() {
+
+		tiles = new TileImage[numberRows][numberColumns];
+
+		for (int i = 0; i < numberRows; i++)
+			for (int j = 0; j < numberColumns; j++) {
+
+				tiles[i][j] = new TileImage(context);
+				tiles[i][j].setId(i * numberColumns + j);
+				RelativeLayout.LayoutParams rllp = new RelativeLayout.LayoutParams(
+						(int) valueWidth, (int) valueHeight);
+				rllp.setMargins((int) (j * valueWidth),
+						(int) (i * valueHeight), 0, 0);
+				layout.addView(tiles[i][j], rllp);
+
+				tiles[i][j].setItemToDisplay(items.get(i * numberColumns + j));
+			}
+	}
+
+}

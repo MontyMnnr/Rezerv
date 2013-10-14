@@ -1,0 +1,38 @@
+package pie.nature;
+
+import java.util.List;
+
+import android.content.Context;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
+
+public class MainLayout extends ScrollView {
+
+	private Context context;
+	private TileImage[][] tiles;
+	private RelativeLayout layout;
+
+	private int numberRows;
+	private int numberColumns;
+	private int numberAll;
+	private int valueWidth;
+	private int valueHeight;
+	private int valueMargin;
+
+	private List<Item> items;
+
+	public MainLayout(Context context) {
+		super(context);
+		this.context = context;
+	}
+
+	public void setItems(List<Item> items) {
+		this.items = items;
+		numberAll = items.size();
+	}
+
+	public TileImage[][] getTiles() {
+		return tiles;
+	}
+
+}

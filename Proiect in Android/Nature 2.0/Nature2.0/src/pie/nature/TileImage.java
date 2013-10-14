@@ -1,0 +1,117 @@
+package pie.nature;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Paint.Style;
+import android.view.Gravity;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+
+public class TileImage extends RelativeLayout implements OnClickListener {
+
+	private Activity activity;
+	private ImageView ivThumb;
+	private TextView tvName;
+	private Item item;
+
+	public static final int COLOR_TEXT = Color.WHITE;
+	public static final int COLOR_TEXT_BACK = Color.argb(150, 0, 0, 0);
+	public static final int COLOR_TILE = Color.rgb(50, 120, 30);
+	public static final int COLOR_BORDER1 = Color.argb(220, 100, 50, 0);
+	public static final int COLOR_BORDER2 = Color.argb(160, 160, 255, 190);
+
+	public static float sizeText = 10f;
+	public static float valueWidth = 100f;
+	public static float valueHeight = 100f;
+	public static float valueMargin = 10f;
+
+	public TileImage(Activity activity) {
+		super(activity);
+		this.activity = activity;
+		ivThumb = new ImageView(activity);
+		tvName = new TextView(activity);
+		this.setBackgroundColor(COLOR_TILE);
+		tvName.setBackgroundColor(COLOR_TEXT_BACK);
+		tvName.setTextColor(COLOR_TEXT);
+		this.setOnClickListener(this);
+	}
+
+	@Override
+	public void draw(Canvas canvas) {
+		super.draw(canvas);
+		Paint paint = new Paint();
+		paint.setAntiAlias(true);
+		paint.setStyle(Style.STROKE);
+		paint.setStrokeWidth(2);
+		paint.setColor(COLOR_BORDER1);
+		canvas.drawRect(1, 1, valueWidth - 1, valueHeight - 1, paint);
+		paint.setStrokeWidth(2);
+		paint.setColor(COLOR_BORDER2);
+		canvas.drawRect(3, 3, valueWidth - 3, valueHeight - 3, paint);
+
+		paint.setStrokeWidth(1);
+		paint.setColor(COLOR_BORDER1);
+		canvas.drawLine(4, 4, 4, valueHeight - 4, paint);
+		canvas.drawLine(4, valueHeight - 4, valueWidth - 4, valueHeight - 4,
+				paint);
+	}
+
+	public static void setupTile(float sizeText, float valueWidth,
+			float valueHeight, float valueMargin) {
+		TileImage.sizeText = sizeText;
+		TileImage.valueWidth = valueWidth;
+		TileImage.valueHeight = valueHeight;
+		TileImage.valueMargin = valueMargin;
+	}
+
+	public void setItemToDisplay(Item item) {
+		this.item = item;
+		setThumb(item.getBmp());
+		setName(item.getName());
+	}
+
+	private void setName(String name) {
+
+		tvName.setText(name);
+		tvName.setTextSize(sizeText);
+		tvName.setGravity(Gravity.CENTER_HORIZONTAL);
+
+		tvName.measure(MeasureSpec.makeMeasureSpec((int) valueWidth,
+				MeasureSpec.AT_MOST), 0);
+		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+				(int) valueWidth, (int) valueHeight);
+		// (left, top, right, bottom)
+		params.setMargins((int) valueMargin,
+				(int) (valueHeight - tvName.getMeasuredHeight() - valueMargin),
+				(int) valueMargin, (int) valueMargin);
+
+		this.addView(tvName, params);
+
+	}
+
+	private void setThumb(Bitmap bmp) {
+
+		ivThumb.setImageBitmap(bmp);
+		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+				(int) valueWidth, (int) valueHeight);
+		params.setMargins((int) valueMargin, (int) valueMargin,
+				(int) valueMargin, (int) valueMargin);
+		this.addView(ivThumb, params);
+
+	}
+
+	@Override
+	public void onClick(View v) {
+		Intent intent = new Intent(activity, DetailActivity.class);
+		intent.putExtra("name", item.getName());
+		activity.startActivity(intent);
+	}
+
+}

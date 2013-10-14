@@ -1,0 +1,24 @@
+package pie.nature;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import android.graphics.Bitmap;
+
+public class DbConnection {
+
+	public static List<Item> getItems() {
+		List<Item> items = new ArrayList<Item>(5);
+
+		Item item;
+
+		for (int i = 0; i < 5; i++) {
+			Bitmap bmp = Bitmap.createBitmap(50, 50, Bitmap.Config.ARGB_8888);
+			item = new Item(bmp, "00001");
+			items.add(item);
+		}
+
+		return items;
+	}
+
+}
